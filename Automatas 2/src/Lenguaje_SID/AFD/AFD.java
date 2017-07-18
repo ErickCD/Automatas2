@@ -32,7 +32,9 @@ public class AFD {
     private void q0() {
         boolean entro;
         while (linea <= rows.length) {
+            System.out.println("linea =" + linea);
             if (contadorGeneral < cadenaGeneral.length) {
+                System.out.println("Caracter -> " + cadenaGeneral[contadorGeneral]);
                 entro = false;
                 //System.out.println("cadena[contador] = " + cadena[contador]);
                 switch (cadenaGeneral[contadorGeneral]) {
@@ -319,19 +321,52 @@ public class AFD {
         }
     }
 
+    //||
     private void q20() {
-        listaTokens.add("porcentaje");
-        contadorGeneral++;
+        if (contadorGeneral < (cadenaGeneral.length - 1)) {
+            if (cadenaGeneral[(contadorGeneral + 1)] == '|') {
+                listaTokens.add("operadorOr");
+                contadorGeneral = contadorGeneral + 2;
+            } else {
+                listaErrores.add("Esperado: | en la linea: " + linea + ", en la columna" + contadorGeneral);
+                contadorGeneral++;
+            }
+        } else {
+            listaErrores.add("Esperado: | en la linea: " + linea + ", en la columna" + contadorGeneral);
+            contadorGeneral++;
+        }
     }
 
+    //!
     private void q21() {
-        listaTokens.add("porcentaje");
-        contadorGeneral++;
+        if (contadorGeneral < (cadenaGeneral.length - 1)) {
+            if (cadenaGeneral[(contadorGeneral + 1)] == '=') {
+                listaTokens.add("operadorDesigual");
+                contadorGeneral = contadorGeneral + 2;
+            } else {
+                listaTokens.add("operadorDeNegacion");
+                contadorGeneral++;
+            }
+        } else {
+            listaTokens.add("operadorDeNegacion");
+            contadorGeneral++;
+        }
     }
 
+    //=
     private void q22() {
-        listaTokens.add("porcentaje");
-        contadorGeneral++;
+        if (contadorGeneral < (cadenaGeneral.length - 1)) {
+            if (cadenaGeneral[(contadorGeneral + 1)] == '=') {
+                listaTokens.add("operadorIgualIgual");
+                contadorGeneral = contadorGeneral + 2;
+            } else {
+                listaTokens.add("operadorDeAsignacion");
+                contadorGeneral++;
+            }
+        } else {
+            listaTokens.add("operadorDeAsignacion");
+            contadorGeneral++;
+        }
     }
 
     private void q23() {
@@ -365,7 +400,26 @@ public class AFD {
     }
 
     private void q24() {
+        boolean decimal = false;
 
+        while (contadorGeneral < cadenaGeneral.length) {
+            if (cadenaGeneral[contadorGeneral] == ' ') {
+                break;
+            } else if (AFD.isNumeric(cadenaGeneral[contadorGeneral])) {
+                contadorGeneral++;
+            } else if (cadenaGeneral[contadorGeneral] == '.') {
+                decimal = true;
+                contadorGeneral++;
+            } else {
+                break;
+            }
+        }
+
+        if (decimal) {
+            listaTokens.add("numeroDecimal");
+        } else {
+            listaTokens.add("numeroEntero");
+        }
     }
 
     private static boolean isNumeric(char numero) {
@@ -404,7 +458,12 @@ public class AFD {
             cadenaGeneral = rows[linea].toCharArray();
             contadorGeneral = 0;
             linea++;
+        } else {
+            linea++;
         }
-        linea++;
+    }
+
+    public ArrayList getListaTokens() {
+        return listaTokens;
     }
 }
